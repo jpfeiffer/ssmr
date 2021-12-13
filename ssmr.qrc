@@ -1,0 +1,11 @@
+<RCC>
+		<qresource prefix="/">
+				<file alias="add.png">res/add.png</file>
+				<file alias="delete.png">res/delete.png</file>
+				<file alias="connect.png">res/connect.png</file>
+				<file alias="disconnect.png">res/disconnect.png</file>
+				<file alias="icon.ico">res/icon.ico</file>
+				<file alias="warning.png">res/warning.png</file>
+				<file alias="information.png">res/information.png</file>
+		</qresource>
+</RCC>
