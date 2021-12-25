@@ -1,5 +1,3 @@
-#include "TrayElementController.h"
-
 #include "MainWindow.h"
 
 #include <QApplication>
@@ -21,23 +19,8 @@ int main(int argc, char *argv[])
   a.setQuitOnLastWindowClosed(false);
   #endif
 
-  Ssmr::TrayElementController tray;
   Ssmr::MainWindow mw;
-
   mw.show();
-
-  QObject::connect(&tray, &Ssmr::TrayElementController::show, [&mw]()
-  {
-    mw.show();
-  });
-
-  #ifdef DEFAULT_COM_PORT
-  QUrl url;
-  const QString port(DEFAULT_COM_PORT);
-
-  url.setScheme("serial");
-  url.setHost(port);
-  #endif
 
   return a.exec();
 }

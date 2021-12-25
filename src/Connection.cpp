@@ -28,7 +28,6 @@ Connection::Connection(const ConnectionData &data, QObject *parent)
 
 Connection::~Connection()
 {
-  qDebug() << "Connection::~Connection()";
 }
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -122,7 +121,9 @@ void Connection::onDataReceived()
   //we can remove the bytes we have already parsed, this allows also for partial messages to be received
   if(0 < processedBytes)
   {
+    #ifdef QT_DEBUG
     qDebug() << "Connection::onDataReceived() consumed" << processedBytes << "bytes";
+    #endif
     m_ReceiveBuffer.remove(0, processedBytes);
   }
 }
@@ -141,14 +142,16 @@ int Connection::parseSmlData(const QByteArray &message)
   //nothing to consume
   if((0 > newStartIndex) || (0 > newEndIndex)) return 0;
 
+  #ifdef QT_DEBUG
   qDebug() << "Connection::onDataReceived() received=" << message.size() << "bytes";
-
+  #endif
   while((0 <= newStartIndex) && (0 < newEndIndex))
   {
     const qint64 timestamp  = QDateTime::currentMSecsSinceEpoch();
 
+    #ifdef QT_DEBUG
     qDebug() << "Connection::onDataReceived() frame from=" << newStartIndex << " to=" << newEndIndex;
-
+    #endif
     //skip the start and end bytes
     QByteArray data = message.mid(newStartIndex + cbaMessageStart.size(),
                                   newEndIndex - (newStartIndex + cbaMessageStart.size()));
@@ -156,8 +159,9 @@ int Connection::parseSmlData(const QByteArray &message)
     //the new message ends after the cbaMessageEnd bytes
     lastEndIndex = newEndIndex + cbaMessageEnd.size();
 
+    #ifdef QT_DEBUG
     qDebug() << "Connection::parseSmlData() raw message=" << QString(data.toHex());
-
+    #endif
     //the buffer contains the whole message, with transport escape sequences, these escape sequences are stripped here
     sml_file* file = sml_file_parse(reinterpret_cast<unsigned char*>(const_cast<char*>(data.data())), data.size());
     //we simply pretend we parsed nothing when we cannot parse the received file
@@ -225,8 +229,10 @@ int Connection::parseSmlData(const QByteArray &message)
           }
 
           m_ObisValueMapping[obisValue].append(timestamp, value);
+          #ifdef QT_DEBUG
           qDebug() << "Connection::parseSmlData() found obisValue=" << obisValue << " timestamp=" << timestamp
                    << " value=" << value;
+          #endif
 
           emit dataValueReceived(obisValue, timestamp, value);
         }
